@@ -1,4 +1,4 @@
-package com.gab.musicplayeravito.domain.entities
+package com.gab.musicplayeravito.domain.models
 
 sealed class CurrentTrackState {
 
@@ -6,6 +6,6 @@ sealed class CurrentTrackState {
 
     data object NoCurrentTrack: CurrentTrackState()
 
-    class CurrentTrack(val track: TrackInfo): CurrentTrackState()
+    class CurrentTrack(val track: TrackInfoModel): CurrentTrackState()
 
 }

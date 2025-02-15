@@ -26,19 +26,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.gab.musicplayeravito.R
-import com.gab.musicplayeravito.domain.entities.TrackInfo
+import com.gab.musicplayeravito.domain.models.TrackInfoModel
 
 @Composable
 fun TracksListElement(
-    trackInfo: TrackInfo,
+    trackInfo: TrackInfoModel,
     onDownloadIconClick: () -> Unit = {},
     onClick: () -> Unit = {},
-    isDownloaded: Boolean = false
+    isDownloaded: Boolean = false,
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .wrapContentHeight().clickable { onClick() },
+            .wrapContentHeight()
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.background,
             contentColor = MaterialTheme.colorScheme.primary
@@ -46,18 +47,21 @@ fun TracksListElement(
         shape = RoundedCornerShape(0.dp),
         border = BorderStroke(width = 1.dp, Color.Black)
     ) {
-        val icon = if (isDownloaded) R.drawable.download_icon_filled
-                    else R.drawable.trash_svgrepo
-        Row(modifier = Modifier
-            .fillMaxSize()
-            .padding(4.dp)) {
+        val icon = if (!isDownloaded) R.drawable.download_icon_filled
+        else R.drawable.trash_svgrepo
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(4.dp)
+        ) {
             AsyncImage(
-                model = if (trackInfo.album.coverUrl == "") trackInfo.album.coverUrl else R.drawable.megumindk,
+                model = if (trackInfo.album.coverUrl == "") R.drawable.megumindk
+                else trackInfo.album.coverUrl,
                 contentDescription = null,
                 modifier = Modifier.size(40.dp)
             )
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.weight(1f)
             ) {
                 Text(
                     trackInfo.title, fontSize = 24.sp, fontWeight = FontWeight.W600,
@@ -75,7 +79,9 @@ fun TracksListElement(
             Icon(
                 contentDescription = null,
                 imageVector = ImageVector.vectorResource(icon),
-                modifier = Modifier.size(40.dp).clickable { onDownloadIconClick() }
+                modifier = Modifier
+                    .size(40.dp)
+                    .clickable { onDownloadIconClick() }
             )
         }
     }

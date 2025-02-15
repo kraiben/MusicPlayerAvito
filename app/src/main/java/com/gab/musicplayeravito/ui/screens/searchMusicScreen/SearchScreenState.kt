@@ -1,6 +1,7 @@
 package com.gab.musicplayeravito.ui.screens.searchMusicScreen
 
-import com.gab.musicplayeravito.domain.entities.TrackInfo
+import com.gab.musicplayeravito.domain.models.TrackInfoModel
+import com.gab.musicplayeravito.ui.screens.general.TracksDownloadState
 
 sealed class SearchScreenState {
 
@@ -8,6 +9,9 @@ sealed class SearchScreenState {
 
     data object Loading: SearchScreenState()
 
-    class Tracks(val tracks: List<TrackInfo>): SearchScreenState()
+    data class Tracks(
+        val tracks: List<TrackInfoModel>,
+        val dataLoadingState: TracksDownloadState
+    ): SearchScreenState()
 
 }

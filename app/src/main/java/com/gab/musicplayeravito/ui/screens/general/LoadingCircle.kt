@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 @Composable
-fun LoadingCircle() {
+fun LoadingCircle(modifier: Modifier = Modifier) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()

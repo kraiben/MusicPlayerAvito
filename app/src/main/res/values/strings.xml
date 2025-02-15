@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">MusicPlayerAvito</string>
-    <string name="search_icon_title">MusicPlayerAvito</string>
-    <string name="downloaded_icon_title">MusicPlayerAvito</string>
+    <string name="search_icon_title">Search</string>
+    <string name="downloaded_icon_title">Downloaded</string>
 </resources>

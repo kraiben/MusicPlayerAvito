@@ -3,15 +3,15 @@ package com.gab.musicplayeravito.data
 import com.gab.musicplayeravito.data.network.dto.AlbumDto
 import com.gab.musicplayeravito.data.network.dto.ArtistDto
 import com.gab.musicplayeravito.data.network.dto.TrackInfoDto
-import com.gab.musicplayeravito.domain.entities.AlbumInfo
-import com.gab.musicplayeravito.domain.entities.ArtistInfo
-import com.gab.musicplayeravito.domain.entities.TrackInfo
+import com.gab.musicplayeravito.domain.models.AlbumInfoModel
+import com.gab.musicplayeravito.domain.models.ArtistInfoModel
+import com.gab.musicplayeravito.domain.models.TrackInfoModel
 import javax.inject.Inject
 
 class MusicMapper @Inject constructor() {
 
 
-    fun mapTrackInfoDtoIntoTrackInfo(trackInfoDto: TrackInfoDto) = TrackInfo(
+    fun mapTrackInfoDtoIntoTrackInfo(trackInfoDto: TrackInfoDto) = TrackInfoModel(
         id = trackInfoDto.id,
         title = trackInfoDto.title,
         previewUrl = trackInfoDto.previewUrl,
@@ -19,13 +19,13 @@ class MusicMapper @Inject constructor() {
         album = mapAlbumDtoIntoAlbumInfo(trackInfoDto.albumDto)
     )
 
-    private fun mapArtistDtoIntoArtistInfo(artistDto: ArtistDto) = ArtistInfo(
+    private fun mapArtistDtoIntoArtistInfo(artistDto: ArtistDto) = ArtistInfoModel(
         id = artistDto.id,
         name = artistDto.name,
         pictureUrl = artistDto.artistPictureUrl
     )
 
-    private fun mapAlbumDtoIntoAlbumInfo(albumDto: AlbumDto) = AlbumInfo(
+    private fun mapAlbumDtoIntoAlbumInfo(albumDto: AlbumDto) = AlbumInfoModel(
         id = albumDto.id,
         title = albumDto.title,
         coverUrl = albumDto.coverUrl

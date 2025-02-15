@@ -3,7 +3,7 @@ package com.gab.musicplayeravito.ui.screens.main
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gab.musicplayeravito.domain.entities.CurrentTrackState
+import com.gab.musicplayeravito.domain.models.CurrentTrackState
 import com.gab.musicplayeravito.ui.ViewModelFactory
 import com.gab.musicplayeravito.ui.navigation.MusicNavGraph
 import com.gab.musicplayeravito.ui.navigation.rememberNavigationState
