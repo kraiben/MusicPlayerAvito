@@ -27,8 +27,6 @@ class SearchMusicViewModel @Inject constructor(
     private val allDataIsLoadedEventUseCase: GetAllDataIsLoadedEventUseCase,
 ) : ViewModel() {
 
-    init {
-    }
 
     private val tracksFlow = getTracksNetworkUseCase()
 

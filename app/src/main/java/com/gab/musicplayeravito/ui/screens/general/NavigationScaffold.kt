@@ -45,7 +45,7 @@ fun NavScaffold(
     navigationState: NavigationState,
     content: @Composable (Modifier) -> Unit,
     onSearchClickListener: (String) -> Unit = {},
-    currentTrackState: State<CurrentTrackState>,
+    currentTrackState: CurrentTrackState,
     onNextClickListener: () -> Unit = {},
     onPreviousClickListener: () -> Unit = {},
     onStopClickListener: () -> Unit = {},

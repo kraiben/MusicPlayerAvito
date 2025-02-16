@@ -16,7 +16,7 @@ interface MusicRepository {
 
     suspend fun setCurrentTrack(track: TrackInfoModel)
 
-    fun getCurrentTrack(): SharedFlow<TrackInfoModel>
+    fun getCurrentTrack(): StateFlow<TrackInfoModel?>
 
     suspend fun downloadTrack(trackInfo: TrackInfoModel)
 

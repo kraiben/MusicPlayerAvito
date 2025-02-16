@@ -1,5 +1,6 @@
 package com.gab.musicplayeravito.ui.screens.musicPlayerScreen
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,12 +18,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,17 +36,18 @@ import coil.compose.AsyncImage
 import com.gab.musicplayeravito.R
 import com.gab.musicplayeravito.domain.models.TrackInfoModel
 import com.gab.musicplayeravito.ui.screens.general.CurrentTrackState
+import com.gab.musicplayeravito.utils.GAB_CHECK
 
 @Composable
 fun MusicPlayerScreen(
-    currentTrackState: State<CurrentTrackState>,
+    currentTrackState: CurrentTrackState,
     onNextClickListener: () -> Unit = {},
     onPreviousClickListener: () -> Unit = {},
     onStopClickListener: () -> Unit = {},
     onStartClickListener: () -> Unit = {}
 ) {
 
-    when (val currState = currentTrackState.value) {
+    when (currentTrackState) {
         CurrentTrackState.NoCurrentTrack -> {
             Box(
                 modifier = Modifier
@@ -59,7 +61,7 @@ fun MusicPlayerScreen(
 
         is CurrentTrackState.Track -> {
             TrackPlayer(
-                currState.track,
+                currentTrackState.track,
                 onNextClickListener = onNextClickListener,
                 onPreviousClickListener = onPreviousClickListener,
                 onStopClickListener = onStopClickListener,
@@ -79,7 +81,6 @@ fun TrackPlayer(
     onPreviousClickListener: () -> Unit = {},
     onStopClickListener: () -> Unit = {},
     onStartClickListener: () -> Unit = {},
-    isPaused: Boolean = true
 ) {
     Column(
         modifier = Modifier
@@ -133,7 +134,7 @@ fun TrackPlayer(
             onPreviousClickListener = onPreviousClickListener,
             onStopClickListener = onStopClickListener,
             onStartClickListener = onStartClickListener,
-            isPaused = isPaused
+            isPaused = track.isPause
         )
 
         Spacer(modifier = Modifier)
@@ -162,16 +163,29 @@ fun PlayStopNextPreviousButtons(
                     onPreviousClickListener()
                 }, tint = Color.Black
         )
-//        val icon = if (isPaused) Icons.Default.
 
-        Icon(
-            Icons.Default.PlayArrow, contentDescription = null,
-            modifier = Modifier
-                .size(60.dp)
-                .clickable {
-                    onStopClickListener()
-                }, tint = Color.Black
-        )
+        AnimatedContent(isPaused) {
+            if (it) {
+                Icon(
+                    Icons.Default.PlayArrow, contentDescription = null,
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clickable {
+                            onStartClickListener()
+                        }, tint = Color.Black
+                )
+            } else {
+                Icon(
+                    Icons.Default.Add, contentDescription = null,
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clickable {
+                            onStopClickListener()
+                        }, tint = Color.Black
+                )
+            }
+        }
+
         Icon(
             imageVector = Icons.AutoMirrored.Default.ArrowForward, contentDescription = null,
             modifier = Modifier

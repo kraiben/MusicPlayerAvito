@@ -8,6 +8,7 @@ import com.gab.musicplayeravito.data.network.DeezerApiService
 import com.gab.musicplayeravito.data.network.utils.Endpoints
 import com.gab.musicplayeravito.data.repository.MusicRepositoryImpl
 import com.gab.musicplayeravito.domain.MusicRepository
+import com.gab.musicplayeravito.ui.PlayerMusic
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -31,6 +32,10 @@ interface DataModule {
             return Room.databaseBuilder(context, MusicDataBase::class.java, name = "database.db")
                 .build()
         }
+
+        @ApplicationScope
+        @Provides
+        fun providePlayerMusic(context: Context) = PlayerMusic.getInstance(context)
 
         @ApplicationScope
         @Provides

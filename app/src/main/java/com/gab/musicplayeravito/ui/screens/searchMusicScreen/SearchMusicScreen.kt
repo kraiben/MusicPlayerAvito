@@ -28,7 +28,7 @@ import com.gab.musicplayeravito.utils.GAB_CHECK
 fun SearchMusicScreen(
     viewModelFactory: ViewModelFactory,
     navigationState: NavigationState,
-    currentTrackState: State<CurrentTrackState>,
+    currentTrackState: CurrentTrackState,
     onTrackClickListener: (TrackInfoModel) -> Unit = {  },
     onNextClickListener: () -> Unit = {},
     onPreviousClickListener: () -> Unit = {},

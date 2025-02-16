@@ -23,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,7 +36,7 @@ import com.gab.musicplayeravito.domain.models.TrackInfoModel
 
 @Composable
 fun MusicPlayerMini(
-    currentTrackState: State<CurrentTrackState>,
+    currentTrackState: CurrentTrackState,
     modifier: Modifier = Modifier,
     onClick: (TrackInfoModel) -> Unit,
     onNextClickListener: () -> Unit = {},
@@ -45,11 +44,11 @@ fun MusicPlayerMini(
     onStopClickListener: () -> Unit = {},
     onStartClickListener: () -> Unit = {},
 ) {
-    when (val currentState = currentTrackState.value) {
+    when (currentTrackState) {
         CurrentTrackState.Initial -> {}
         CurrentTrackState.NoCurrentTrack -> {}
         is CurrentTrackState.Track -> {
-            val trackInfo = currentState.track
+            val trackInfo = currentTrackState.track
             Card(
                 modifier = modifier
                     .fillMaxWidth()
