@@ -7,9 +7,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
-import androidx.media3.common.Player
 import com.gab.musicplayeravito.domain.models.TrackInfoModel
 import com.gab.musicplayeravito.domain.usecases.GetCurrentTrackUseCase
 import com.gab.musicplayeravito.domain.usecases.NextTrackUseCase
@@ -20,7 +18,6 @@ import com.gab.musicplayeravito.domain.usecases.StartTrackUseCase
 import com.gab.musicplayeravito.ui.PlayerMusic
 import com.gab.musicplayeravito.ui.screens.general.CurrentTrackState
 import com.gab.musicplayeravito.ui.service.MusicPlayerService
-import com.gab.musicplayeravito.utils.GAB_CHECK
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map

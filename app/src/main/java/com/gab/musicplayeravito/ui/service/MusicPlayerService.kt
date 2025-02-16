@@ -7,14 +7,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.BitmapFactory
 import android.media.MediaPlayer
-import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
 import com.gab.musicplayeravito.R
 import com.gab.musicplayeravito.domain.models.TrackInfoModel
@@ -27,7 +25,6 @@ import com.gab.musicplayeravito.domain.usecases.StartTrackUseCase
 import com.gab.musicplayeravito.ui.MusicApplication
 import com.gab.musicplayeravito.ui.PlayerMusic
 import com.gab.musicplayeravito.ui.screens.general.CurrentTrackState
-
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
