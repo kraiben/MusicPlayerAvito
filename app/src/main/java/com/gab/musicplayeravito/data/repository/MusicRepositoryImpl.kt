@@ -40,7 +40,7 @@ class MusicRepositoryImpl @Inject constructor(
 
     private val loadNextEvent = MutableSharedFlow<Unit>(replay = 1)
 
-
+    private var currentTrackPlaylist = listOf<TrackInfoModel>()
 
     private val tracksLoaded = flow<List<TrackInfoModel>> {
         loadNextEvent.emit(Unit)
@@ -105,31 +105,42 @@ class MusicRepositoryImpl @Inject constructor(
 
     override suspend fun setCurrentTrack(track: TrackInfoModel) {
         val id = track.id
+        val selectedTrack = trackList.find { it.id == id }
+            ?: throw RuntimeException("Track Not In List")
+        currentTrackIndex = trackList.indexOf(selectedTrack)
         currentTrackState.emit(
-            trackList.find { it.id == id } ?: throw RuntimeException("Track Not In List")
+            selectedTrack
         )
-    }
-
-    override suspend fun nextTrack() {
-        val tracksCnt = trackList.size
-        if (currentTrackIndex != 0) {
-            currentTrackIndex++
-            currentTrackState.emit(trackList[currentTrackIndex])
-        } else {
-            currentTrackState.emit(trackList.last())
-            currentTrackIndex = tracksCnt
-        }
     }
 
     override suspend fun previousTrack() {
         val tracksCnt = trackList.size
-        if (currentTrackIndex != tracksCnt) {
+        if (currentTrackIndex != 0) {
             currentTrackIndex--
+            currentTrackState.emit(trackList[currentTrackIndex])
+        } else {
+            currentTrackState.emit(trackList.last())
+            currentTrackIndex = tracksCnt - 1
+        }
+    }
+
+    override suspend fun nextTrack() {
+        val tracksCnt = trackList.size
+        if (currentTrackIndex < tracksCnt - 1 ) {
+            currentTrackIndex++
             currentTrackState.emit(trackList[currentTrackIndex])
         } else {
             currentTrackState.emit(trackList.first())
             currentTrackIndex = 0
         }
+    }
+
+    override suspend fun pauseTrack() {
+
+    }
+
+    override suspend fun startTrack() {
+
     }
 
     override suspend fun downloadTrack(trackInfo: TrackInfoModel) {

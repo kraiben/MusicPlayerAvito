@@ -1,6 +1,8 @@
 package com.gab.musicplayeravito.ui.screens.main
 
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,19 +20,14 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-//    @Inject
-//    lateinit var exps: Exps
 
     private val component by lazy {
         (application as MusicApplication).component
     }
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         GAB_CHECK("__________________________________________________________")
         component.inject(this)
         super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
         setContent {
             MusicPlayerAvitoTheme {
                 MainMusicScreen(viewModelFactory)
@@ -38,18 +35,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-
-}
-
-
-
-class Exps @Inject constructor(
-    private val apiService: DeezerApiService,
-) {
-    private val coroutineScope = CoroutineScope(Dispatchers.IO)
-
-    operator fun invoke() {
-
-    }
 
 }

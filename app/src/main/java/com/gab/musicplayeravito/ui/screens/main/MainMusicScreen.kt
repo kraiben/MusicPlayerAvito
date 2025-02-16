@@ -26,13 +26,21 @@ fun MainMusicScreen(viewModelFactory: ViewModelFactory) {
                     viewModel.setCurrentTrack(track)
                     navigationState.navigateToPlayer()
                 },
-                currentTrackState = currentTrackState
-            )
+                currentTrackState = currentTrackState,
+                onNextClickListener = { viewModel.onNextTrack() },
+                onPreviousClickListener = { viewModel.onPreviousTrack() },
+                onStopClickListener = { viewModel.pauseTrack() },
+                onStartClickListener = { viewModel.startTrack() }
+                )
         },
         musicDownloadedScreenContent = {},
         audioPlayerScreenContent = {
             MusicPlayerScreen(
-                currentTrackState = currentTrackState
+                currentTrackState = currentTrackState,
+                onNextClickListener = { viewModel.onNextTrack() },
+                onPreviousClickListener = { viewModel.onPreviousTrack() },
+                onStopClickListener = { viewModel.pauseTrack() },
+                onStartClickListener = { viewModel.startTrack() }
             )
         },
     )

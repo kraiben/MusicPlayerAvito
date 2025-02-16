@@ -10,6 +10,8 @@ kotlinxSerializationJson = "1.8.0"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
 composeBom = "2025.01.01"
+media3ExoplayerDash = "1.5.1"
+media3Ui = "1.5.1"
 retrofit = "2.11.0"
 roomKtx = "2.6.1"
 loggingInterceptor = "4.12.0"
@@ -18,10 +20,14 @@ coilCompose = "2.7.0"
 navigationCompose = "2.8.6"
 runtimeLivedata = "1.7.7"
 ksp = "2.1.0-1.0.29"
+media3CommonKtx = "1.5.1"
+media3Exoplayer = "1.5.1"
 
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3Ui" }
+androidx-media3-exoplayer-dash = { module = "androidx.media3:media3-exoplayer-dash", version.ref = "media3ExoplayerDash" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomKtx" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomKtx" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomKtx" }
@@ -48,6 +54,8 @@ dagger = { module = "com.google.dagger:dagger", version.ref = "dagger" }
 dagger-compiler = { module = "com.google.dagger:dagger-compiler", version.ref = "dagger" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+androidx-media3-common-ktx = { group = "androidx.media3", name = "media3-common-ktx", version.ref = "media3CommonKtx" }
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3Exoplayer" }
 
 
 [plugins]

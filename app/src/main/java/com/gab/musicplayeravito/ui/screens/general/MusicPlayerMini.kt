@@ -40,6 +40,10 @@ fun MusicPlayerMini(
     currentTrackState: State<CurrentTrackState>,
     modifier: Modifier = Modifier,
     onClick: (TrackInfoModel) -> Unit,
+    onNextClickListener: () -> Unit = {},
+    onPreviousClickListener: () -> Unit = {},
+    onStopClickListener: () -> Unit = {},
+    onStartClickListener: () -> Unit = {},
 ) {
     when (val currentState = currentTrackState.value) {
         CurrentTrackState.Initial -> {}
@@ -87,6 +91,7 @@ fun MusicPlayerMini(
                         )
                         Text(
                             trackInfo.artist.name, fontSize = 16.sp, fontWeight = FontWeight.W200,
+                            maxLines = 1,
                             modifier = Modifier
                                 .wrapContentHeight()
                         )
@@ -94,25 +99,36 @@ fun MusicPlayerMini(
                     Row(
                         modifier = modifier
                             .wrapContentWidth(),
-//                        horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
                             contentDescription = null,
-                            modifier = Modifier.size(40.dp),
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickable {
+                                    onPreviousClickListener()
+                                },
                             tint = Color.Black
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(
                             Icons.Default.PlayArrow, contentDescription = null,
-                            modifier = Modifier.size(40.dp), tint = Color.Black
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickable {
+                                    onStartClickListener()
+                                }, tint = Color.Black
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowForward,
                             contentDescription = null,
-                            modifier = Modifier.size(40.dp),
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clickable {
+                                    onNextClickListener()
+                                },
                             tint = Color.Black
                         )
                     }
