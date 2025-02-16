@@ -26,4 +26,8 @@ interface MusicRepository {
 
     suspend fun previousTrack()
 
+    suspend fun pauseTrack()
+
+    suspend fun startTrack()
+
 }

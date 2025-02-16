@@ -28,7 +28,6 @@ class SearchMusicViewModel @Inject constructor(
 ) : ViewModel() {
 
     init {
-        GAB_CHECK("ебаная вью модел пересоздалась")
     }
 
     private val tracksFlow = getTracksNetworkUseCase()

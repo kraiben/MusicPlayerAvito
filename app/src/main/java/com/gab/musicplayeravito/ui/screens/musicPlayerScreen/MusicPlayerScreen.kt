@@ -1,6 +1,7 @@
 package com.gab.musicplayeravito.ui.screens.musicPlayerScreen
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,6 +39,10 @@ import com.gab.musicplayeravito.ui.screens.general.CurrentTrackState
 @Composable
 fun MusicPlayerScreen(
     currentTrackState: State<CurrentTrackState>,
+    onNextClickListener: () -> Unit = {},
+    onPreviousClickListener: () -> Unit = {},
+    onStopClickListener: () -> Unit = {},
+    onStartClickListener: () -> Unit = {}
 ) {
 
     when (val currState = currentTrackState.value) {
@@ -53,7 +58,13 @@ fun MusicPlayerScreen(
         }
 
         is CurrentTrackState.Track -> {
-            TrackPlayer(currState.track)
+            TrackPlayer(
+                currState.track,
+                onNextClickListener = onNextClickListener,
+                onPreviousClickListener = onPreviousClickListener,
+                onStopClickListener = onStopClickListener,
+                onStartClickListener = onStartClickListener
+            )
         }
 
         else -> {}
@@ -62,7 +73,14 @@ fun MusicPlayerScreen(
 }
 
 @Composable
-fun TrackPlayer(track: TrackInfoModel) {
+fun TrackPlayer(
+    track: TrackInfoModel,
+    onNextClickListener: () -> Unit = {},
+    onPreviousClickListener: () -> Unit = {},
+    onStopClickListener: () -> Unit = {},
+    onStartClickListener: () -> Unit = {},
+    isPaused: Boolean = true
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -90,7 +108,7 @@ fun TrackPlayer(track: TrackInfoModel) {
         Row(
             modifier = Modifier
                 .fillMaxWidth(),
-            ) {
+        ) {
             Text(
                 text = track.artist.name,
                 modifier = Modifier,
@@ -110,14 +128,27 @@ fun TrackPlayer(track: TrackInfoModel) {
             Spacer(modifier = Modifier.width(16.dp))
         }
 
-        PlayStopNextPreviousButtons()
+        PlayStopNextPreviousButtons(
+            onNextClickListener = onNextClickListener,
+            onPreviousClickListener = onPreviousClickListener,
+            onStopClickListener = onStopClickListener,
+            onStartClickListener = onStartClickListener,
+            isPaused = isPaused
+        )
 
         Spacer(modifier = Modifier)
     }
 }
 
 @Composable
-fun PlayStopNextPreviousButtons(modifier: Modifier = Modifier) {
+fun PlayStopNextPreviousButtons(
+    isPaused: Boolean = true,
+    modifier: Modifier = Modifier,
+    onNextClickListener: () -> Unit = {},
+    onPreviousClickListener: () -> Unit = {},
+    onStopClickListener: () -> Unit = {},
+    onStartClickListener: () -> Unit = {}
+) {
     Row(
         modifier = modifier
             .fillMaxWidth(),
@@ -125,15 +156,29 @@ fun PlayStopNextPreviousButtons(modifier: Modifier = Modifier) {
     ) {
         Icon(
             imageVector = Icons.AutoMirrored.Default.ArrowBack, contentDescription = null,
-            modifier = Modifier.size(60.dp), tint = Color.Black
+            modifier = Modifier
+                .size(60.dp)
+                .clickable {
+                    onPreviousClickListener()
+                }, tint = Color.Black
         )
+//        val icon = if (isPaused) Icons.Default.
+
         Icon(
             Icons.Default.PlayArrow, contentDescription = null,
-            modifier = Modifier.size(60.dp), tint = Color.Black
+            modifier = Modifier
+                .size(60.dp)
+                .clickable {
+                    onStopClickListener()
+                }, tint = Color.Black
         )
         Icon(
             imageVector = Icons.AutoMirrored.Default.ArrowForward, contentDescription = null,
-            modifier = Modifier.size(60.dp), tint = Color.Black
+            modifier = Modifier
+                .size(60.dp)
+                .clickable {
+                    onNextClickListener()
+                }, tint = Color.Black
         )
     }
 }

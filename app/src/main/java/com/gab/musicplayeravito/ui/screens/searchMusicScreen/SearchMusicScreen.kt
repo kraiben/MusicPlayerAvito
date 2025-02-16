@@ -29,14 +29,22 @@ fun SearchMusicScreen(
     viewModelFactory: ViewModelFactory,
     navigationState: NavigationState,
     currentTrackState: State<CurrentTrackState>,
-    onTrackClickListener: (TrackInfoModel) -> Unit = {  }
+    onTrackClickListener: (TrackInfoModel) -> Unit = {  },
+    onNextClickListener: () -> Unit = {},
+    onPreviousClickListener: () -> Unit = {},
+    onStopClickListener: () -> Unit = {},
+    onStartClickListener: () -> Unit = {}
 ) {
     val viewModel: SearchMusicViewModel = viewModel(factory = viewModelFactory)
 
     val searchScreenState = viewModel.screenState.collectAsState()
 
     NavScaffold(
-        navigationState,
+        onNextClickListener = onNextClickListener,
+        onPreviousClickListener = onPreviousClickListener,
+        onStopClickListener = onStopClickListener,
+        onStartClickListener = onStartClickListener,
+        navigationState = navigationState,
         content = { modifier ->
             when (val currentState = searchScreenState.value) {
                 is SearchScreenState.Tracks ->
