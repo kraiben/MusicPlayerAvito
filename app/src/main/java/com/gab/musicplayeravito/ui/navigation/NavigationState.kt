@@ -7,7 +7,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 
 class NavigationState(
-    val navHostController: NavHostController
+    val navHostController: NavHostController,
 ) {
     fun navigateTo(route: String) {
         navHostController.navigate(route) {
@@ -18,10 +18,15 @@ class NavigationState(
             launchSingleTop = true
         }
     }
+    fun navigateToPlayer() {
+        navigateTo(Screen.AUDIO_PLAYER_ROUTE)
+    }
 }
 
 @Composable
-fun rememberNavigationState(navHostController: NavHostController = rememberNavController()) : NavigationState {
+fun rememberNavigationState(
+    navHostController: NavHostController = rememberNavController()
+): NavigationState {
     return remember {
         NavigationState(navHostController)
     }
