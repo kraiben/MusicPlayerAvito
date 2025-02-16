@@ -6,5 +6,7 @@ data class TrackInfoModel(
     val previewUrl: String,
     val artist: ArtistInfoModel,
     val album: AlbumInfoModel,
-    val isDownloaded: Boolean = false
+    val isDownloaded: Boolean = false,
+    val indexInList: Int = 0,
+    var isPause: Boolean = false
 )

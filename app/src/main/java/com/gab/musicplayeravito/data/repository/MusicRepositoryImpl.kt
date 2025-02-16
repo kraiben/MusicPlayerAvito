@@ -17,12 +17,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class MusicRepositoryImpl @Inject constructor(
     private val mapper: MusicMapper,
     private val apiService: DeezerApiService,
-    private val musicDao: MusicDao
+    private val musicDao: MusicDao,
 ) : MusicRepository {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
@@ -31,7 +32,7 @@ class MusicRepositoryImpl @Inject constructor(
     private val trackList: List<TrackInfoModel> get() = _trackList.toList()
 
     private var currentTrackIndex: Int = 0
-    private val currentTrackState = MutableSharedFlow<TrackInfoModel>()
+    private val currentTrackState = MutableStateFlow<TrackInfoModel?>(null)
 
     private val queryState = MutableStateFlow<String?>(null)
     private var searchStartIndex = START_SEARCH_INDEX_DEFAULT
@@ -61,12 +62,17 @@ class MusicRepositoryImpl @Inject constructor(
             }
 
             val response = apiService.searchMusic(query, index = startFrom).response
-                .map {mapper.mapTrackInfoDtoIntoTrackInfo(it)}
+                .mapIndexed { index, trackInfoDto ->
+                    mapper.mapTrackInfoDtoIntoTrackInfo(
+                        trackInfoDto,
+                        index
+                    )
+                }
 
             GAB_CHECK("${response.size} ____________________________________________________")
             val trackIds = trackList.map { it.id }
             val tracksToAdd = response.filter { element ->
-                trackIds.count{ id ->
+                trackIds.count { id ->
                     id == element.id
                 } < 1
             }
@@ -85,7 +91,7 @@ class MusicRepositoryImpl @Inject constructor(
         true
     }.stateIn(coroutineScope, SharingStarted.Lazily, listOf())
 
-    override fun getCurrentTrack(): SharedFlow<TrackInfoModel> = currentTrackState
+    override fun getCurrentTrack(): StateFlow<TrackInfoModel?> = currentTrackState
 
     override fun getTracksNetwork(): StateFlow<List<TrackInfoModel>> = tracksLoaded
 
@@ -101,19 +107,22 @@ class MusicRepositoryImpl @Inject constructor(
         loadNextEvent.emit(Unit)
     }
 
-    override fun getAllDataIsLoadedEvent(): SharedFlow<List<TrackInfoModel>> = isAllDataDownloadedEvent
+    override fun getAllDataIsLoadedEvent(): SharedFlow<List<TrackInfoModel>> =
+        isAllDataDownloadedEvent
 
     override suspend fun setCurrentTrack(track: TrackInfoModel) {
         val id = track.id
         val selectedTrack = trackList.find { it.id == id }
             ?: throw RuntimeException("Track Not In List")
-        currentTrackIndex = trackList.indexOf(selectedTrack)
+        currentTrackIndex = track.indexInList
         currentTrackState.emit(
             selectedTrack
         )
     }
 
     override suspend fun previousTrack() {
+        if (trackList.isEmpty()) return
+
         val tracksCnt = trackList.size
         if (currentTrackIndex != 0) {
             currentTrackIndex--
@@ -125,8 +134,10 @@ class MusicRepositoryImpl @Inject constructor(
     }
 
     override suspend fun nextTrack() {
+        if (trackList.isEmpty()) return
+
         val tracksCnt = trackList.size
-        if (currentTrackIndex < tracksCnt - 1 ) {
+        if (currentTrackIndex < tracksCnt - 1) {
             currentTrackIndex++
             currentTrackState.emit(trackList[currentTrackIndex])
         } else {
@@ -136,11 +147,15 @@ class MusicRepositoryImpl @Inject constructor(
     }
 
     override suspend fun pauseTrack() {
-
+        currentTrackState.update {
+            it?.copy(isPause = true)
+        }
     }
 
     override suspend fun startTrack() {
-
+        currentTrackState.update {
+            it?.copy(isPause = false)
+        }
     }
 
     override suspend fun downloadTrack(trackInfo: TrackInfoModel) {
@@ -154,8 +169,8 @@ class MusicRepositoryImpl @Inject constructor(
     private suspend fun setDefaultTrackList() {
         val defaultChart = apiService.getDefaultTracks()
         _trackList.addAll(
-            defaultChart.tracks.response.map {
-                mapper.mapTrackInfoDtoIntoTrackInfo(it)
+            defaultChart.tracks.response.mapIndexed { index, trackInfoDto ->
+                mapper.mapTrackInfoDtoIntoTrackInfo(trackInfoDto, index)
             }
         )
     }

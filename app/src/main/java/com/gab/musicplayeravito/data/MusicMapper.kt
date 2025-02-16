@@ -11,12 +11,13 @@ import javax.inject.Inject
 class MusicMapper @Inject constructor() {
 
 
-    fun mapTrackInfoDtoIntoTrackInfo(trackInfoDto: TrackInfoDto) = TrackInfoModel(
+    fun mapTrackInfoDtoIntoTrackInfo(trackInfoDto: TrackInfoDto, indexInList: Int) = TrackInfoModel(
         id = trackInfoDto.id,
         title = trackInfoDto.title,
         previewUrl = trackInfoDto.previewUrl,
         artist = mapArtistDtoIntoArtistInfo(trackInfoDto.artistDto),
-        album = mapAlbumDtoIntoAlbumInfo(trackInfoDto.albumDto)
+        album = mapAlbumDtoIntoAlbumInfo(trackInfoDto.albumDto),
+        indexInList = indexInList
     )
 
     private fun mapArtistDtoIntoArtistInfo(artistDto: ArtistDto) = ArtistInfoModel(

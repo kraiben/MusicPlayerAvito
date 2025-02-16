@@ -2,6 +2,8 @@ package com.gab.musicplayeravito.ui.screens.main
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gab.musicplayeravito.ui.ViewModelFactory
 import com.gab.musicplayeravito.ui.navigation.MusicNavGraph
@@ -15,7 +17,8 @@ fun MainMusicScreen(viewModelFactory: ViewModelFactory) {
 
     val viewModel: MainViewModel = viewModel(factory = viewModelFactory)
     val navigationState = rememberNavigationState()
-    val currentTrackState = viewModel.currentTrackState.collectAsState(CurrentTrackState.Initial)
+    val currentTrackState by viewModel.currentTrackState.collectAsStateWithLifecycle()
+
     MusicNavGraph(
         navHostController = navigationState.navHostController,
         musicSearchScreenContent = {
