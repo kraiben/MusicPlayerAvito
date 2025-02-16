@@ -1,8 +1,9 @@
 package com.gab.musicplayeravito.ui.screens.general
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,6 +19,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,8 +41,9 @@ import com.gab.musicplayeravito.utils.topBorder
 @Composable
 fun NavScaffold(
     navigationState: NavigationState,
-    content: @Composable (PaddingValues) -> Unit,
-    onSearchClickListener: (String) -> Unit = {}
+    content: @Composable (Modifier) -> Unit,
+    onSearchClickListener: (String) -> Unit = {},
+    currentTrackState: State<CurrentTrackState>
 ) {
     Scaffold(
 
@@ -118,12 +121,18 @@ fun NavScaffold(
                                 text = stringResource(id = item.titleResId)
                             )
                         }
-
                     )
                 }
             }
         }
     ) { paddingValues ->
-        content(paddingValues)
+        Column (modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            content(Modifier.weight(1f))
+            MusicPlayerMini(
+                currentTrackState,
+            ) {
+                navigationState.navigateToPlayer()
+            }
+        }
     }
 }

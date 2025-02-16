@@ -1,9 +1,9 @@
 package com.gab.musicplayeravito.data.repository
 
 import com.gab.musicplayeravito.data.MusicMapper
+import com.gab.musicplayeravito.data.filework.MusicDao
 import com.gab.musicplayeravito.data.network.DeezerApiService
 import com.gab.musicplayeravito.domain.MusicRepository
-import com.gab.musicplayeravito.domain.models.CurrentTrackState
 import com.gab.musicplayeravito.domain.models.TrackInfoModel
 import com.gab.musicplayeravito.utils.GAB_CHECK
 import kotlinx.coroutines.CoroutineScope
@@ -22,6 +22,7 @@ import javax.inject.Inject
 class MusicRepositoryImpl @Inject constructor(
     private val mapper: MusicMapper,
     private val apiService: DeezerApiService,
+    private val musicDao: MusicDao
 ) : MusicRepository {
 
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
@@ -29,8 +30,8 @@ class MusicRepositoryImpl @Inject constructor(
     private val _trackList = mutableListOf<TrackInfoModel>()
     private val trackList: List<TrackInfoModel> get() = _trackList.toList()
 
-    private val currentTrackState =
-        MutableStateFlow(CurrentTrackState.NoCurrentTrack as CurrentTrackState)
+    private var currentTrackIndex: Int = 0
+    private val currentTrackState = MutableSharedFlow<TrackInfoModel>()
 
     private val queryState = MutableStateFlow<String?>(null)
     private var searchStartIndex = START_SEARCH_INDEX_DEFAULT
@@ -38,6 +39,8 @@ class MusicRepositoryImpl @Inject constructor(
     private val isAllDataDownloadedEvent = MutableSharedFlow<List<TrackInfoModel>>()
 
     private val loadNextEvent = MutableSharedFlow<Unit>(replay = 1)
+
+
 
     private val tracksLoaded = flow<List<TrackInfoModel>> {
         loadNextEvent.emit(Unit)
@@ -82,7 +85,7 @@ class MusicRepositoryImpl @Inject constructor(
         true
     }.stateIn(coroutineScope, SharingStarted.Lazily, listOf())
 
-    override fun getCurrentTrack(): StateFlow<CurrentTrackState> = currentTrackState
+    override fun getCurrentTrack(): SharedFlow<TrackInfoModel> = currentTrackState
 
     override fun getTracksNetwork(): StateFlow<List<TrackInfoModel>> = tracksLoaded
 
@@ -100,11 +103,33 @@ class MusicRepositoryImpl @Inject constructor(
 
     override fun getAllDataIsLoadedEvent(): SharedFlow<List<TrackInfoModel>> = isAllDataDownloadedEvent
 
-    override suspend fun getTrackById(id: Long) {
-        val track = apiService.getTrackById(id)
+    override suspend fun setCurrentTrack(track: TrackInfoModel) {
+        val id = track.id
         currentTrackState.emit(
-            CurrentTrackState.CurrentTrack(mapper.mapTrackInfoDtoIntoTrackInfo(track))
+            trackList.find { it.id == id } ?: throw RuntimeException("Track Not In List")
         )
+    }
+
+    override suspend fun nextTrack() {
+        val tracksCnt = trackList.size
+        if (currentTrackIndex != 0) {
+            currentTrackIndex++
+            currentTrackState.emit(trackList[currentTrackIndex])
+        } else {
+            currentTrackState.emit(trackList.last())
+            currentTrackIndex = tracksCnt
+        }
+    }
+
+    override suspend fun previousTrack() {
+        val tracksCnt = trackList.size
+        if (currentTrackIndex != tracksCnt) {
+            currentTrackIndex--
+            currentTrackState.emit(trackList[currentTrackIndex])
+        } else {
+            currentTrackState.emit(trackList.first())
+            currentTrackIndex = 0
+        }
     }
 
     override suspend fun downloadTrack(trackInfo: TrackInfoModel) {
