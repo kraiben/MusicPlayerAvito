@@ -1,6 +1,13 @@
 package com.gab.musicplayeravito.ui.screens.main
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Context.BIND_AUTO_CREATE
+import android.content.Intent
+import android.content.ServiceConnection
+import android.os.IBinder
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.Player
 import com.gab.musicplayeravito.domain.models.TrackInfoModel
@@ -12,6 +19,7 @@ import com.gab.musicplayeravito.domain.usecases.SetCurrentTrackUseCase
 import com.gab.musicplayeravito.domain.usecases.StartTrackUseCase
 import com.gab.musicplayeravito.ui.PlayerMusic
 import com.gab.musicplayeravito.ui.screens.general.CurrentTrackState
+import com.gab.musicplayeravito.ui.service.MusicPlayerService
 import com.gab.musicplayeravito.utils.GAB_CHECK
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.collectLatest
@@ -27,7 +35,8 @@ class MainViewModel @Inject constructor(
     private val previousTrackUseCase: PreviousTrackUseCase,
     private val startTrackUseCase: StartTrackUseCase,
     private val pauseTrackUseCase: PauseTrackUseCase,
-    private val playerMusic: PlayerMusic
+    private val playerMusic: PlayerMusic,
+    private val context: Context
 ) : ViewModel() {
 
     val currentTrackState = getCurrentTrackUseCase()
@@ -37,17 +46,23 @@ class MainViewModel @Inject constructor(
         }
         .stateIn(scope = viewModelScope, SharingStarted.Lazily, CurrentTrackState.NoCurrentTrack)
 
-    init {
-        playerMusic.addListener(object : Player.Listener {
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                if (playbackState == Player.STATE_ENDED) {
-                    viewModelScope.launch {
-                        nextTrackUseCase()
-                    }
-                }
-            }
+    private var service: MusicPlayerService? = null
 
-        })
+
+    val connection = object : ServiceConnection {
+        override fun onServiceConnected(p0: ComponentName?, binder: IBinder?) {
+            service = (binder as MusicPlayerService.MusicBinder).getService()
+//            isBound = true
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+//            isBound = false
+        }
+    }
+
+    init {
+
+
 
         viewModelScope.launch {
             currentTrackState.collectLatest { trackState ->
@@ -64,6 +79,14 @@ class MainViewModel @Inject constructor(
                 }
             }
         }
+        setupService()
+
+    }
+
+    private fun setupService() {
+        val intent = Intent(context, MusicPlayerService::class.java)
+        context.startService(intent)
+        context.bindService(intent, connection, BIND_AUTO_CREATE)
     }
 
     fun setCurrentTrack(track: TrackInfoModel) {
@@ -73,27 +96,33 @@ class MainViewModel @Inject constructor(
     }
 
     fun onNextTrack() {
-        viewModelScope.launch {
-            nextTrackUseCase()
-        }
+//        viewModelScope.launch {
+//            nextTrackUseCase()
+//        }
+        service?.onNextTrack()
     }
 
     fun onPreviousTrack() {
-        viewModelScope.launch {
-            previousTrackUseCase()
-        }
+//        viewModelScope.launch {
+//            previousTrackUseCase()
+//        }
+        service?.onPreviousTrack()
     }
 
+
     fun pauseTrack() {
-        viewModelScope.launch {
-            pauseTrackUseCase()
-        }
+//        viewModelScope.launch {
+//            pauseTrackUseCase()
+//        }
+        service?.pauseTrack()
     }
 
     fun startTrack() {
-        viewModelScope.launch {
-            startTrackUseCase()
-        }
+//        viewModelScope.launch {
+//            startTrackUseCase()
+//        }
+
+        service?.startTrack()
     }
 
 }

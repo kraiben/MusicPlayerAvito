@@ -83,4 +83,7 @@ dependencies {
     implementation(libs.dagger)
     kapt(libs.dagger.compiler) // ksp для dagger в альфе
 
+    implementation( "androidx.media:media:1.7.0")
+    implementation("com.google.accompanist:accompanist-permissions:0.29.0-alpha")
+
 }
