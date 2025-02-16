@@ -1,5 +1,6 @@
 package com.gab.musicplayeravito.ui.screens.general
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -111,14 +113,27 @@ fun MusicPlayerMini(
                             tint = Color.Black
                         )
                         Spacer(modifier = Modifier.width(8.dp))
-                        Icon(
-                            Icons.Default.PlayArrow, contentDescription = null,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .clickable {
-                                    onStartClickListener()
-                                }, tint = Color.Black
-                        )
+                        AnimatedContent(currentTrackState.track.isPause) {
+                            if (it) {
+                                Icon(
+                                    Icons.Default.PlayArrow, contentDescription = null,
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clickable {
+                                            onStartClickListener()
+                                        }, tint = Color.Black
+                                )
+                            } else {
+                                Icon(
+                                    Icons.Default.Add, contentDescription = null,
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .clickable {
+                                            onStopClickListener()
+                                        }, tint = Color.Black
+                                )
+                            }
+                        }
                         Spacer(modifier = Modifier.width(8.dp))
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowForward,

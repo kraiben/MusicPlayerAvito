@@ -19,7 +19,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,13 +58,12 @@ fun NavScaffold(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
                     ) {
                         var textField: String by remember { mutableStateOf("") }
                         TextField(
                             value = textField,
                             maxLines = 1,
-                            textStyle = TextStyle(fontSize = 16.sp),
+                            textStyle = TextStyle(fontSize = 20.sp, color = Color.Black),
                             modifier = Modifier.weight(1f),
                             onValueChange = { textField = it },
                             colors = TextFieldDefaults.colors(
@@ -80,7 +78,7 @@ fun NavScaffold(
                             ImageVector.vectorResource(R.drawable.magnifying_glass),
                             contentDescription = null,
                             modifier = Modifier
-                                .size(28.dp)
+                                .size(40.dp)
                                 .clickable {
                                     onSearchClickListener(textField)
                                 }
@@ -89,6 +87,7 @@ fun NavScaffold(
                 }
             )
         },
+
         bottomBar = {
             BottomAppBar(
                 modifier = Modifier.topBorder(MaterialTheme.colorScheme.onTertiary, height = 1F),
@@ -149,7 +148,7 @@ fun NavScaffold(
                 onPreviousClickListener = onPreviousClickListener,
                 onStopClickListener = onStopClickListener,
                 onStartClickListener = onStartClickListener,
-                )
+            )
         }
     }
 }
