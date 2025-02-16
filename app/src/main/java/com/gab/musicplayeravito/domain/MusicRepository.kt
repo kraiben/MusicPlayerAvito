@@ -1,6 +1,5 @@
 package com.gab.musicplayeravito.domain
 
-import com.gab.musicplayeravito.domain.models.CurrentTrackState
 import com.gab.musicplayeravito.domain.models.TrackInfoModel
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,12 +14,20 @@ interface MusicRepository {
 
     suspend fun loadNextData()
 
-    suspend fun getTrackById(id: Long)
+    suspend fun setCurrentTrack(track: TrackInfoModel)
+
+    fun getCurrentTrack(): SharedFlow<TrackInfoModel>
 
     suspend fun downloadTrack(trackInfo: TrackInfoModel)
 
     fun getDownloadedTracks(): StateFlow<TrackInfoModel>
 
-    fun getCurrentTrack(): StateFlow<CurrentTrackState>
+    suspend fun nextTrack()
+
+    suspend fun previousTrack()
+
+    suspend fun pauseTrack()
+
+    suspend fun startTrack()
 
 }

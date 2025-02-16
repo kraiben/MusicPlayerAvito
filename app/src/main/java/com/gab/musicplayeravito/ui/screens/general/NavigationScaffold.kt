@@ -1,8 +1,9 @@
 package com.gab.musicplayeravito.ui.screens.general
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -18,6 +19,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,7 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.gab.musicplayeravito.R
@@ -39,43 +43,50 @@ import com.gab.musicplayeravito.utils.topBorder
 @Composable
 fun NavScaffold(
     navigationState: NavigationState,
-    content: @Composable (PaddingValues) -> Unit,
-    onSearchClickListener: (String) -> Unit = {}
+    content: @Composable (Modifier) -> Unit,
+    onSearchClickListener: (String) -> Unit = {},
+    currentTrackState: State<CurrentTrackState>,
+    onNextClickListener: () -> Unit = {},
+    onPreviousClickListener: () -> Unit = {},
+    onStopClickListener: () -> Unit = {},
+    onStartClickListener: () -> Unit = {},
 ) {
     Scaffold(
 
         topBar = {
             TopAppBar(
-              title = {
-                  Row(
-                      modifier = Modifier
-                          .fillMaxWidth()
-                          .padding(16.dp)
-                  ) {
-                      var textField: String by remember { mutableStateOf("") }
-                      TextField(
-                          value = textField,
-                          modifier = Modifier.weight(1f),
-                          onValueChange = { textField = it },
-                          colors = TextFieldDefaults.colors(
-                              focusedContainerColor = MaterialTheme.colorScheme.surface, // Цвет фона в состоянии фокуса
-                              unfocusedContainerColor = MaterialTheme.colorScheme.surface, // Цвет фона в неактивном состоянии
-                              focusedTextColor = Color.Black,
-                              disabledTextColor = Color.Black,
-                              unfocusedTextColor = Color.Black
-                          )
-                      )
-                      Icon(
-                          ImageVector.vectorResource(R.drawable.magnifying_glass),
-                          contentDescription = null,
-                          modifier = Modifier
-                              .size(28.dp)
-                              .clickable {
-                                  onSearchClickListener(textField)
-                              }
-                      )
-                  }
-              }
+                title = {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                    ) {
+                        var textField: String by remember { mutableStateOf("") }
+                        TextField(
+                            value = textField,
+                            maxLines = 1,
+                            textStyle = TextStyle(fontSize = 16.sp),
+                            modifier = Modifier.weight(1f),
+                            onValueChange = { textField = it },
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
+                                focusedTextColor = Color.Black,
+                                disabledTextColor = Color.Black,
+                                unfocusedTextColor = Color.Black
+                            )
+                        )
+                        Icon(
+                            ImageVector.vectorResource(R.drawable.magnifying_glass),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(28.dp)
+                                .clickable {
+                                    onSearchClickListener(textField)
+                                }
+                        )
+                    }
+                }
             )
         },
         bottomBar = {
@@ -118,12 +129,27 @@ fun NavScaffold(
                                 text = stringResource(id = item.titleResId)
                             )
                         }
-
                     )
                 }
             }
         }
     ) { paddingValues ->
-        content(paddingValues)
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            content(Modifier.weight(1f))
+            MusicPlayerMini(
+                currentTrackState,
+                onClick = {
+                    navigationState.navigateToPlayer()
+                },
+                onNextClickListener = onNextClickListener,
+                onPreviousClickListener = onPreviousClickListener,
+                onStopClickListener = onStopClickListener,
+                onStartClickListener = onStartClickListener,
+                )
+        }
     }
 }

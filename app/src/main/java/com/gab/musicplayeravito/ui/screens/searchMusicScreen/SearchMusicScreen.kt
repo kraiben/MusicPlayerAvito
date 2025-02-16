@@ -4,9 +4,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,8 +15,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gab.musicplayeravito.domain.models.TrackInfoModel
 import com.gab.musicplayeravito.ui.ViewModelFactory
 import com.gab.musicplayeravito.ui.navigation.NavigationState
+import com.gab.musicplayeravito.ui.screens.general.CurrentTrackState
 import com.gab.musicplayeravito.ui.screens.general.LoadingCircle
 import com.gab.musicplayeravito.ui.screens.general.NavScaffold
 import com.gab.musicplayeravito.ui.screens.general.TracksList
@@ -26,17 +28,28 @@ import com.gab.musicplayeravito.utils.GAB_CHECK
 fun SearchMusicScreen(
     viewModelFactory: ViewModelFactory,
     navigationState: NavigationState,
+    currentTrackState: State<CurrentTrackState>,
+    onTrackClickListener: (TrackInfoModel) -> Unit = {  },
+    onNextClickListener: () -> Unit = {},
+    onPreviousClickListener: () -> Unit = {},
+    onStopClickListener: () -> Unit = {},
+    onStartClickListener: () -> Unit = {}
 ) {
     val viewModel: SearchMusicViewModel = viewModel(factory = viewModelFactory)
 
-    val searchScreenState = viewModel.screenState.collectAsState(SearchScreenState.Initial)
+    val searchScreenState = viewModel.screenState.collectAsState()
 
     NavScaffold(
-        navigationState,
-        content = { paddingValues ->
+        onNextClickListener = onNextClickListener,
+        onPreviousClickListener = onPreviousClickListener,
+        onStopClickListener = onStopClickListener,
+        onStartClickListener = onStartClickListener,
+        navigationState = navigationState,
+        content = { modifier ->
             when (val currentState = searchScreenState.value) {
-                is SearchScreenState.Tracks -> TracksList(
-                    paddingValues = paddingValues,
+                is SearchScreenState.Tracks ->
+                    TracksList(
+                        modifier = modifier,
                     tracks = currentState.tracks,
                     loadNext = {
                         GAB_CHECK("SEARCH: Load next started")
@@ -57,17 +70,19 @@ fun SearchMusicScreen(
                             )
                         }
                     },
-                    tracksDownloadingState = currentState.dataLoadingState
+                    tracksDownloadingState = currentState.dataLoadingState,
+                    onTrackClickListener = onTrackClickListener
                 )
 
                 SearchScreenState.Initial -> {}
-                SearchScreenState.Loading -> LoadingCircle(modifier = Modifier.padding(paddingValues))
+                SearchScreenState.Loading -> LoadingCircle(modifier = Modifier)
 
             }
         },
         onSearchClickListener = { query ->
             viewModel.searchTracks(query)
-        }
+        },
+        currentTrackState = currentTrackState
     )
 
 

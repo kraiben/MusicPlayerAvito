@@ -1,5 +1,9 @@
 package com.gab.musicplayeravito.di
 
+import android.content.Context
+import androidx.room.Room
+import com.gab.musicplayeravito.data.filework.MusicDao
+import com.gab.musicplayeravito.data.filework.MusicDataBase
 import com.gab.musicplayeravito.data.network.DeezerApiService
 import com.gab.musicplayeravito.data.network.utils.Endpoints
 import com.gab.musicplayeravito.data.repository.MusicRepositoryImpl
@@ -21,6 +25,18 @@ interface DataModule {
     fun bindMusicRepisitory(repositoryImpl: MusicRepositoryImpl): MusicRepository
 
     companion object {
+        @ApplicationScope
+        @Provides
+        fun provideDatabase(context: Context): MusicDataBase {
+            return Room.databaseBuilder(context, MusicDataBase::class.java, name = "database.db")
+                .build()
+        }
+
+        @ApplicationScope
+        @Provides
+        fun provideMusicDao(musicDataBase: MusicDataBase): MusicDao {
+            return musicDataBase.musicDao()
+        }
 
         @Provides
         @ApplicationScope

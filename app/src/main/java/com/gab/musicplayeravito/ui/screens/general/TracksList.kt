@@ -1,7 +1,5 @@
 package com.gab.musicplayeravito.ui.screens.general
 
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -17,21 +15,22 @@ fun TracksList(
     allDataLoaded: @Composable () -> Unit = {},
     downloadIconClick: () -> Unit = {},
     deleteIconClick: () -> Unit = {},
-    paddingValues: PaddingValues,
+    onTrackClickListener: (TrackInfoModel) -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier = Modifier.padding(paddingValues)) {
+    LazyColumn(modifier = modifier) {
 
         items(items = tracks, key = { "${it.id}_${it.artist.id}_${it.title}" }) { track ->
             TracksListElement(
                 trackInfo = track,
-                isDownloaded = track.isDownloaded,
                 onDownloadIconClick = {
                     if (track.isDownloaded) {
                         deleteIconClick()
                     } else {
                         downloadIconClick()
                     }
-                }
+                },
+                onClick = onTrackClickListener
             )
         }
 

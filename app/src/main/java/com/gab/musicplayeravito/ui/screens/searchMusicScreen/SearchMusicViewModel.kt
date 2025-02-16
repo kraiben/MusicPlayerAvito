@@ -15,8 +15,8 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,6 +26,9 @@ class SearchMusicViewModel @Inject constructor(
     private val searchTracksUseCase: SearchTracksUseCase,
     private val allDataIsLoadedEventUseCase: GetAllDataIsLoadedEventUseCase,
 ) : ViewModel() {
+
+    init {
+    }
 
     private val tracksFlow = getTracksNetworkUseCase()
 
@@ -52,9 +55,7 @@ class SearchMusicViewModel @Inject constructor(
                     TracksDownloadState.DATA_IS_NOT_LOADING
                 ) as SearchScreenState
             }
-            .onStart {
-                emit(SearchScreenState.Loading)
-            }
+
             .mergeWith(loadNextDataFlow)
             .mergeWith(allDataDownloadedFlow)
             .onEach {
@@ -65,7 +66,7 @@ class SearchMusicViewModel @Inject constructor(
                     SearchScreenState.Initial -> GAB_CHECK("STATE: Initial Search Music State")
                     SearchScreenState.Loading -> GAB_CHECK("STATE: Loading Search Music State")
                 }
-            }
+            }.stateIn(viewModelScope, SharingStarted.Lazily, SearchScreenState.Loading)
 
     fun loadNextData() {
         viewModelScope.launch {
