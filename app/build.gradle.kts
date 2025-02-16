@@ -79,4 +79,8 @@ dependencies {
     implementation(libs.dagger)
     kapt(libs.dagger.compiler) // ksp для dagger в альфе
 
+    implementation(libs.androidx.media3.exoplayer)
+    implementation(libs.androidx.media3.exoplayer.dash)
+    implementation(libs.androidx.media3.ui)
+
 }
